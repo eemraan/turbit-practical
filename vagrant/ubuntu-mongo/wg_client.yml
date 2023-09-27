@@ -1,0 +1,28 @@
+---
+- name: Install WireGuard and set up VPN connection
+  hosts: all  
+  become: yes
+  tasks:
+
+    - name: Install WireGuard on Debian/Ubuntu
+      apt:
+        name: 
+          - wireguard
+          - resolvconf
+        state: present
+        update_cache: yes
+
+    - name: Copy WireGuard configuration file
+      copy:
+        src: ../vm_keys/wg_client.conf  
+        dest: /etc/wireguard/wg_client.conf  
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Start WireGuard
+
+  handlers:
+    - name: Start WireGuard
+      command: wg-quick up /etc/wireguard/wg_client.conf
+      become: yes
+      ignore_errors: yes  # Ignore errors if the connection is already established

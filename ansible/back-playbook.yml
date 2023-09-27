@@ -1,0 +1,16 @@
+---
+- name: Install and Configure MongoDB
+  hosts: back 
+  become: yes           
+
+  tasks:
+    - name: Add public key to known_hosts
+      authorized_key:
+        user: vagrant # Replace with the remote user on the target host
+        key: "{{ lookup('file', 'vm_keys/mongo.pub') }}"  # Path to your SSH public key
+        state: present
+    
+    - name: Create the Backup Folder
+      file:
+        path: /home/vagrant/mongo-backup     
+        state: directory

@@ -1,0 +1,28 @@
+---
+- name: Install and Configure MongoDB
+  hosts: all 
+  become: yes           
+
+  tasks:
+    - name: Create the Backup Folder
+      file:
+        path: /temp/mongo-backup     
+        state: directory
+    
+    - name: Create the Scripts Folder
+      file:
+        path: /home/vagrant/scripts    
+        state: directory
+    
+    - name: Copy Transfer file
+      become_user: vagrant
+      copy:
+        src: scripts/backup_transfer.sh     
+        dest: /home/vagrant/scripts/backup_transfer.sh
+
+    - name: Create the cron job
+      cron:
+        name: RunScriptEveryHour
+        minute: 0
+        hour: "*"
+        job: "/home/vagrant/scripts/backup_transfer.sh"

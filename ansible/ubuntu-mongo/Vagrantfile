@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "ubuntu-mongo" do |vm_config| # Add a name to your VM here
+    vm_config.vm.box = "ubuntu/bionic64"
+    vm_config.vm.network "private_network", ip: "192.168.56.16"
+    vm_config.vm.hostname = "mongo"
+    vm_config.vm.synced_folder "../vm_keys", "/vagrant"
+    #vm_config.vm.network "public_network"
+    vm_config.vm.provider "virtualbox" do |vb|
+      vb.memory = "1028"
+      vb.cpus = "1"
+    end
+    vm_config.vm.provision "shell", inline: <<-SHELL
+    # Update the package lists
+      sudo apt-get update
+
+    # Install Ansible
+      sudo apt-get install -y ansible
+    SHELL
+    end
+
+  
+  
+
+end
